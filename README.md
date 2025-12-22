@@ -33,12 +33,7 @@ A robust RESTful API for a Task Management application built with Node.js, Expre
     ```
 3.  Create a `.env` file based on the example below:
     ```env
-    PORT=5000
-    MONGO_URI=mongodb://localhost:27017/task-manager
     JWT_SECRET=your_jwt_secret
-    JWT_EXPIRE=30d
-    NODE_ENV=development
-    REDIS_URL=redis://localhost:6379
     ```
 4.  **Start MongoDB** (locally or use Atlas)
 5.  **Start Redis** (locally):
