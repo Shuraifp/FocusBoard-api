@@ -19,8 +19,12 @@ A robust RESTful API for a Task Management application built with Node.js, Expre
 *   MongoDB & Mongoose
 *   TypeScript
 *   JWT & Bcrypt
+*   Redis (Token Blacklisting)
+*   Docker & Docker Compose
 
 ## Setup
+
+### Option 1: Local Development
 
 1.  Clone the repository.
 2.  Install dependencies:
@@ -34,11 +38,36 @@ A robust RESTful API for a Task Management application built with Node.js, Expre
     JWT_SECRET=your_jwt_secret
     JWT_EXPIRE=30d
     NODE_ENV=development
+    REDIS_URL=redis://localhost:6379
     ```
-4.  Run the server:
+4.  **Start MongoDB** (locally or use Atlas)
+5.  **Start Redis** (locally):
+    ```bash
+    redis-server
+    ```
+6.  Run the server:
     ```bash
     pnpm dev
     ```
+
+### Option 2: Docker (Production)
+
+1.  Create a `.env` file with your `JWT_SECRET`
+2.  Run with Docker Compose:
+    ```bash
+    docker-compose up --build
+    ```
+3.  The API will be available at `http://localhost:5000`
+
+### Option 3: Docker (Development with Hot-Reload)
+
+1.  Create a `.env` file with your `JWT_SECRET`
+2.  Run with development Docker Compose:
+    ```bash
+    docker-compose -f docker-compose.dev.yml up
+    ```
+3.  Edit code in `src/` - changes will auto-reload!
+4.  The API will be available at `http://localhost:5000`
 
 ## API Endpoints
 

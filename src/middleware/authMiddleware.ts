@@ -19,6 +19,13 @@ export const protect = asyncHandler(async (req: Request, res: Response, next: Ne
     try {
       token = req.headers.authorization.split(' ')[1];
 
+      const { isTokenBlacklisted } = await import('../services/authService');
+      const blacklisted = await isTokenBlacklisted(token);
+
+      if (blacklisted) {
+        return next(new AppError('Token has been revoked', 401));
+      }
+
       const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string };
 
       const user = await User.findById(decoded.id).select('-password');

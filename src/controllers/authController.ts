@@ -12,7 +12,6 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
     return next(new AppError('Please provide all fields', 400));
   }
 
-  // Password validation: Min 6 chars, at least one number
   if (password.length < 6 || !/\d/.test(password)) {
     return next(new AppError('Password must be at least 6 characters and contain a number', 400));
   }
@@ -99,13 +98,14 @@ export const getMe = asyncHandler(async (req: Request, res: Response, next: Next
   });
 });
 
-// @desc    Log user out / clear cookie
-// @route   POST /api/auth/logout
-// @access  Private
 export const logout = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  // Since we are using stateless JWT, we can't really "logout" on server without a database blacklist.
-  // However, for the purpose of the API requirement, we return success.
-  // The client should remove the token.
+  const authReq = req as any;
+  const token = authReq.headers.authorization?.split(' ')[1];
+
+  if (token) {
+    const { blacklistToken } = await import('../services/authService');
+    await blacklistToken(token);
+  }
 
   res.status(200).json({
     success: true,
