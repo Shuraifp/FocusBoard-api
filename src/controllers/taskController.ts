@@ -129,7 +129,6 @@ export const updateTask = asyncHandler(async (req: Request, res: Response, next:
     await Category.findByIdAndUpdate(req.body.category, { $inc: { taskCount: 1 } });
   }
 
-  // Handle status completion date
   if (req.body.status) {
     if (!['todo', 'in-progress', 'completed', 'archived'].includes(req.body.status)) {
       return next(new AppError('Invalid status', 400));
