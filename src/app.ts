@@ -11,8 +11,20 @@ app.use(cors());
 app.use(helmet());
 app.use(morgan('dev'));
 
+import authRoutes from './routes/authRoutes';
+import categoryRoutes from './routes/categoryRoutes';
+import taskRoutes from './routes/taskRoutes';
+import { errorHandler } from './middleware/errorMiddleware';
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/tasks', taskRoutes);
+
 app.get('/', (req, res) => {
   res.json({ message: 'Task Management API is running' });
 });
+
+app.use(errorHandler);
 
 export default app;
