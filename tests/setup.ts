@@ -1,3 +1,6 @@
+process.env.NODE_ENV = 'test';
+process.env.JWT_SECRET = 'test-secret-key-for-jest';
+process.env.JWT_EXPIRE = '1h';
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
 

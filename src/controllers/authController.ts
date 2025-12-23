@@ -4,21 +4,22 @@ import User from '../models/User';
 import { AppError } from '../utils/AppError';
 import { asyncHandler } from '../middleware/asyncHandler';
 import { generateToken } from '../services/authService';
+import { AUTH_MESSAGES } from '../constants/messages';
 
 export const register = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
-    return next(new AppError('Please provide all fields', 400));
+    return next(new AppError(AUTH_MESSAGES.MISSING_FIELDS, 400));
   }
 
   if (password.length < 6 || !/\d/.test(password)) {
-    return next(new AppError('Password must be at least 6 characters and contain a number', 400));
+    return next(new AppError(AUTH_MESSAGES.WEAK_PASSWORD, 400));
   }
 
   const userExists = await User.findOne({ $or: [{ email }, { username }] });
   if (userExists) {
-    return next(new AppError('User already exists', 409));
+    return next(new AppError(AUTH_MESSAGES.USER_ALREADY_EXISTS, 409));
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -33,7 +34,7 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
   if (user) {
     res.status(201).json({
       success: true,
-      message: 'Registration successful',
+      message: AUTH_MESSAGES.REGISTRATION_SUCCESS,
       data: {
         user: {
           id: user._id,
@@ -47,7 +48,7 @@ export const register = asyncHandler(async (req: Request, res: Response, next: N
       },
     });
   } else {
-    return next(new AppError('Invalid user data', 400));
+    return next(new AppError(AUTH_MESSAGES.INVALID_USER_DATA, 400));
   }
 });
 
@@ -55,7 +56,7 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return next(new AppError('Please provide email and password', 400));
+    return next(new AppError(AUTH_MESSAGES.MISSING_EMAIL_PASSWORD, 400));
   }
 
   const user = await User.findOne({ email });
@@ -77,7 +78,7 @@ export const login = asyncHandler(async (req: Request, res: Response, next: Next
       },
     });
   } else {
-    return next(new AppError('Invalid credentials', 401));
+    return next(new AppError(AUTH_MESSAGES.INVALID_CREDENTIALS, 401));
   }
 });
 
@@ -85,7 +86,7 @@ export const getMe = asyncHandler(async (req: Request, res: Response, next: Next
   const user = (req as any).user;
 
   if (!user) {
-    return next(new AppError('User not found', 404));
+    return next(new AppError(AUTH_MESSAGES.USER_NOT_FOUND, 404));
   }
 
   res.status(200).json({
@@ -109,7 +110,7 @@ export const logout = asyncHandler(async (req: Request, res: Response, next: Nex
 
   res.status(200).json({
     success: true,
-    message: 'Logged out successfully',
+    message: AUTH_MESSAGES.LOGOUT_SUCCESS,
     data: {}
   });
 });
